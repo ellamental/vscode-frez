@@ -3,8 +3,8 @@
 	"displayName": "vscode-frez",
 	"publisher": "frez",
 	"description": "",
-	"repository": "",
-	"version": "0.0.9",
+	"repository": "https://github.com/jacktrades/vscode-frez",
+	"version": "0.0.10",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
