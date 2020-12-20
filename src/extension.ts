@@ -12,25 +12,23 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
 		// vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.nextLine')
 		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-		// vscode.commands.executeCommand('emacs-mcx.nextLine', {to: 'down', by: 'line', value: 10})
-		// Actually we just want to do a "center screen" here, not a scroll.
-		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+		vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
 	});
 	context.subscriptions.push(disposable);
 
 	let disposable2 = vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
 		// vscode.commands.executeCommand('cursorMove', {to: 'up', by: 'line', value: 10})
-		// vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.prevLine')
 		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+		vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
 	});
 
 	context.subscriptions.push(disposable2);
