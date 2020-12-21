@@ -2,46 +2,58 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const chunkSize: number = 10
+    const chunkSize: number = 10
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
-		// The naive method below doesn't respect the mark mode in emacs-mcx.
-		// vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
-		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
+        // The naive method below doesn't respect the mark mode in emacs-mcx.
+        // vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
+        // vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
 
-		let i: number
-		for (i=0; i<chunkSize; i++) {
-			vscode.commands.executeCommand('emacs-mcx.nextLine')
-		}
+        const editor = vscode.window.activeTextEditor
+        const select = editor && !editor.selection.isEmpty
 
-		// This doesn't actually "center" the cursor, but it does make the
-		// screen scroll without (visually) moving the cursor.
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-	}));
+        vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'wrappedLine', value: chunkSize, select: select})
+        vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'wrappedLine', value: chunkSize})
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
-		let i: number
-		for (i=0; i<chunkSize; i++) {
-			vscode.commands.executeCommand('emacs-mcx.previousLine')
-		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-	}));
+        // let i: number
+        // for (i=0; i<chunkSize; i++) {
+        //     vscode.commands.executeCommand('emacs-mcx.nextLine')
+        // }
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
-		let i: number
-		for (i=0; i<chunkSize*5; i++) {
-			vscode.commands.executeCommand('emacs-mcx.nextLine')
-		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-	}));
+        // // This doesn't actually "center" the cursor, but it does make the
+        // // screen scroll without (visually) moving the cursor.
+        // vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+    }));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunkMultiple', () => {
-		let i: number
-		for (i=0; i<chunkSize*5; i++) {
-			vscode.commands.executeCommand('emacs-mcx.previousLine')
-		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-	}));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
+        const editor = vscode.window.activeTextEditor
+        const select = editor && !editor.selection.isEmpty
+
+        vscode.commands.executeCommand('cursorMove', {to: 'up', by: 'wrappedLine', value: chunkSize, select: select})
+        vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'wrappedLine', value: chunkSize})
+
+        // let i: number
+        // for (i=0; i<chunkSize; i++) {
+        //     vscode.commands.executeCommand('emacs-mcx.previousLine')
+        // }
+        // vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
+        let i: number
+        for (i=0; i<chunkSize*5; i++) {
+            vscode.commands.executeCommand('emacs-mcx.nextLine')
+        }
+        vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunkMultiple', () => {
+        let i: number
+        for (i=0; i<chunkSize*5; i++) {
+            vscode.commands.executeCommand('emacs-mcx.previousLine')
+        }
+        vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+    }));
 
 
 
