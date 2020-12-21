@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.22",
+	"version": "0.0.23",
 	"engines": {
 		"vscode": "^1.52.0"
 	},

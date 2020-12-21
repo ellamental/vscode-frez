@@ -8,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// The naive method below doesn't respect the mark mode in emacs-mcx.
 		// vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
 		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 
 		let i: number
 		for (i=0; i<chunkSize; i++) {
@@ -16,15 +17,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// This doesn't actually "center" the cursor, but it does make the
 		// screen scroll without (visually) moving the cursor.
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+		// vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i: number
 		for (i=0; i<chunkSize; i++) {
 			vscode.commands.executeCommand('emacs-mcx.previousLine')
 		}
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
+		// vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
