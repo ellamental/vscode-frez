@@ -1,37 +1,42 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-frez" is now active!');
-
-	let disposable = vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
+		// The naive method below doesn't respect the mark mode in emacs-mcx.
 		// vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
+		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+
 		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.nextLine')
 		}
-		vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
-	});
-	context.subscriptions.push(disposable);
+		// We should recenter after moving the cursor, but it makes the screen
+		// jump around when you run these scroll-chunk commands at the
+		// bottom/top of a file.
+		//
+		// Calling `emacs-mcx.recenterTopBottom` consecutively should do this,
+		// however the `emacs-mcx.nextLine` calls should "interrupt" that
+		// behavior and always result in the screen being scrolled so the cursor
+		// is "centered".  I think this is likely a "bug" in
+		// `emacs-mcx.recenterTopBottom`.
+		//
+		// vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 
-	let disposable2 = vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
+		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
 		// vscode.commands.executeCommand('cursorMove', {to: 'up', by: 'line', value: 10})
 		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.previousLine')
 		}
-		vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
-	});
+		// vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
+	}));
 
-	context.subscriptions.push(disposable2);
 }
 
 // this method is called when your extension is deactivated
