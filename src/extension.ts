@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
-			vscode.commands.executeCommand('emacs-mcx.prevLine')
+			vscode.commands.executeCommand('emacs-mcx.previousLine')
 		}
 		vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
 	});
