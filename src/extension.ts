@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunkMultiple', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
 		let i: number
 		for (i=0; i<chunkSize*5; i++) {
 			vscode.commands.executeCommand('emacs-mcx.nextLine')
@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunkMultiple', () => {
 		let i: number
 		for (i=0; i<chunkSize*5; i++) {
 			vscode.commands.executeCommand('emacs-mcx.previousLine')
