@@ -7,11 +7,11 @@ export function activate(context: vscode.ExtensionContext) {
 		// vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
 		// vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
 
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.nextLine')
 		}
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		// We should recenter after moving the cursor, but it makes the screen
 		// jump around when you run these scroll-chunk commands at the
 		// bottom/top of a file.
@@ -29,11 +29,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
 		// vscode.commands.executeCommand('cursorMove', {to: 'up', by: 'line', value: 10})
-		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		let i
 		for (i=0; i<10; i++) {
 			vscode.commands.executeCommand('emacs-mcx.previousLine')
 		}
+		vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
 		// vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'line', value: 10})
 	}));
 
