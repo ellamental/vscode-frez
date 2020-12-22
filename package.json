@@ -4,18 +4,12 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.26",
+	"version": "0.0.27",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
 	"categories": [
 		"Other"
-	],
-	"#activationEvents": [
-		"onCommand:vscode-frez.scrollUpChunk",
-		"onCommand:vscode-frez.scrollDownChunk",
-		"onCommand:vscode-frez.scrollUpChunkMultiple",
-		"onCommand:vscode-frez.scrollDownChunkMultiple"
 	],
 	"activationEvents": [
 		"*"
@@ -24,20 +18,20 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-frez.scrollUpChunk",
-				"title": "Frez - Scroll Up Chunk"
+				"command": "vscode-frez.moveUpChunk",
+				"title": "Frez - Move Up Chunk"
 			},
 			{
-				"command": "vscode-frez.scrollDownChunk",
-				"title": "Frez - Scroll Down Chunk"
+				"command": "vscode-frez.moveDownChunk",
+				"title": "Frez - Move Down Chunk"
 			},
 			{
-				"command": "vscode-frez.scrollUpChunkMultiple",
-				"title": "Frez - Scroll Up Chunk Multiple"
+				"command": "vscode-frez.moveUpChunks",
+				"title": "Frez - Move Up Chunks"
 			},
 			{
-				"command": "vscode-frez.scrollDownChunkMultiple",
-				"title": "Frez - Scroll Down Chunk Multiple"
+				"command": "vscode-frez.moveDownChunks",
+				"title": "Frez - Move Down Chunks"
 			}
 		]
 	},
