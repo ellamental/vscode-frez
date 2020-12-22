@@ -1,63 +1,77 @@
+/**
+ * ###########
+ * vscode-frez
+ * ###########
+ * 
+ * An extension for my personal VSCode config, because VSCode doesn't give me an
+ * executable init file.
+ *
+ * ???
+ * ===================================================================================================================
+ * 
+ * - Can I get the "direction" of a selection (the origin and termination point,
+ *   as opposed to just the start/end positions)?
+ * 
+ * - Where to find the full `vscode` API?
+ * - How to get a list of `when` contexts?
+ * - How to see keybindings debug console?
+ * - How to get a list of all commands (even ones not "contributed")?
+ * - What are all the (editor) events I can subscribe to?
+ */
+ 
 import * as vscode from 'vscode';
+
+
 
 export function activate(context: vscode.ExtensionContext) {
 
     const chunkSize: number = 10
 
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunk', () => {
-        // The naive method below doesn't respect the mark mode in emacs-mcx.
-        // vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'line', value: 10})
-        // vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'line', value: 10})
+    // function getSelection() {
+    //     // TODO(nick): In Emacs, `point` is not always at the beginning of an
+    //     //             active region (selection).  It sometimes matters... at a
+    //     //             minimum, commands that deactivate the region should leave
+    //     //             the cursor at `point` (not `mark`).
+    //     //
+    //     //             All the extension I've seen that implement point/mark do
+    //     //             it with some internal state that tracks the point/mark.
+    //     //             This may be necessary
+    //     //
+    //     //             Can we get the "direction" of a selection?  If so, we
+    //     //             could potentially implement `point/mark` without relying
+    //     //             on an extention's internal state.
+    // }
 
+    function isSelectionActive() {
         const editor = vscode.window.activeTextEditor
-        const select = editor && !editor.selection.isEmpty
+        return editor && !editor.selection.isEmpty
+    }
 
-        vscode.commands.executeCommand('cursorMove', {to: 'down', by: 'wrappedLine', value: chunkSize, select: select})
-        vscode.commands.executeCommand('editorScroll', {to: 'down', by: 'wrappedLine', value: chunkSize})
+    /**
+     * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
+     */
+    function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
+        vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
+        vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount})
+    }
 
-        // let i: number
-        // for (i=0; i<chunkSize; i++) {
-        //     vscode.commands.executeCommand('emacs-mcx.nextLine')
-        // }
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunk', () => {
+        _moveCursorVerticallyAndCenter('down', chunkSize)
+    }))
 
-        // // This doesn't actually "center" the cursor, but it does make the
-        // // screen scroll without (visually) moving the cursor.
-        // vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-    }));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveUpChunk', () => {
+        _moveCursorVerticallyAndCenter('up', chunkSize)
+    }))
 
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunk', () => {
-        const editor = vscode.window.activeTextEditor
-        const select = editor && !editor.selection.isEmpty
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunks', () => {
+        _moveCursorVerticallyAndCenter('down', chunkSize * 4)
+    }))
 
-        vscode.commands.executeCommand('cursorMove', {to: 'up', by: 'wrappedLine', value: chunkSize, select: select})
-        vscode.commands.executeCommand('editorScroll', {to: 'up', by: 'wrappedLine', value: chunkSize})
-
-        // let i: number
-        // for (i=0; i<chunkSize; i++) {
-        //     vscode.commands.executeCommand('emacs-mcx.previousLine')
-        // }
-        // vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-    }));
-
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollDownChunkMultiple', () => {
-        let i: number
-        for (i=0; i<chunkSize*5; i++) {
-            vscode.commands.executeCommand('emacs-mcx.nextLine')
-        }
-        vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-    }));
-
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.scrollUpChunkMultiple', () => {
-        let i: number
-        for (i=0; i<chunkSize*5; i++) {
-            vscode.commands.executeCommand('emacs-mcx.previousLine')
-        }
-        vscode.commands.executeCommand("emacs-mcx.recenterTopBottom")
-    }));
-
-
-
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveUpChunks', () => {
+        _moveCursorVerticallyAndCenter('up', chunkSize * 4)
+    }))
 }
 
-// this method is called when your extension is deactivated
+// `deactivate` is called when the extension is deactivated.
+//
 export function deactivate() {}
