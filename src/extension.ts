@@ -64,11 +64,11 @@ export function activate(context: vscode.ExtensionContext) {
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunks', () => {
-        _moveCursorVerticallyAndCenter('down', chunkSize * 4)
+        _moveCursorVerticallyAndCenter('down', chunkSize * 2)
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveUpChunks', () => {
-        _moveCursorVerticallyAndCenter('up', chunkSize * 4)
+        _moveCursorVerticallyAndCenter('up', chunkSize * 2)
     }))
 }
 
