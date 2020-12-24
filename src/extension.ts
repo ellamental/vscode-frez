@@ -78,7 +78,7 @@ async function centerCursor() {
  */
 async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
     await vscode.commands.executeCommand('cursorMove', { to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive() })
-    centerCursor()
+    await centerCursor()
 }
 
 
