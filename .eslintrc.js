@@ -4,16 +4,7 @@
 // Using ESLint and Prettier in a TypeScript Project
 //     https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
 //
-// There seem to be a few (potentially conflicting) sets of options:
-//
-//   - ["error", "warn", "off"]  // A VSCode thing?
-//   - [0, 1, 2]  // ESLint "standard"?
-//   - ["always", "never"]  // ??? not sure if this is actually a thing
-//   - Some ESLint rules specify their own set of options: https://eslint.org/docs/rules/curly
-//
-// I'm not sure exactly how of if these work together, which one we should be
-// using, or if the VSCode ESLint extension is different from the ESLint command
-// line program.
+
 
 module.exports = {
     // ignorePatterns: ["temp.js", "**/vendor/*.js"],  // example
@@ -56,14 +47,14 @@ module.exports = {
         //     }
         //
         "@typescript-eslint/member-delimiter-style": ["error", {
-          multiline: {
-            delimiter: 'none',    // 'none' or 'semi' or 'comma'
-            requireLast: true,
-          },
-          singleline: {
-            delimiter: 'comma',    // 'semi' or 'comma'
-            requireLast: false,
-          },
+            multiline: {
+                delimiter: 'none',    // 'none' or 'semi' or 'comma'
+                requireLast: true,
+            },
+            singleline: {
+                delimiter: 'comma',    // 'semi' or 'comma'
+                requireLast: false,
+            },
         }],
 
         // TODO(nick): Specify brace style... I think "my style" is "the one

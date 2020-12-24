@@ -13,14 +13,18 @@
  *   as opposed to just the start/end positions)?
  * 
  * - Where to find the full `vscode` API?
+ * 
  * - How to get a list of `when` contexts?
+ * 
  * - How to see keybindings debug console?
+ *   `C-h C-S-k` (`workbench.action.toggleKeybindingsLog`)
+ * 
  * - How to get a list of all commands (even ones not "contributed")?
+ * 
  * - What are all the (editor) events I can subscribe to?
  */
  
-import * as vscode from 'vscode';
-
+import * as vscode from 'vscode'
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -47,12 +51,31 @@ export function activate(context: vscode.ExtensionContext) {
         return editor && !editor.selection.isEmpty
     }
 
+    // Center cursor
+    // -------------
+
+    function centerCursor() {
+        const editor = vscode.window.activeTextEditor
+        if (!editor) { return }
+        const currentLine = editor.selection.start.line
+        const offset = 4
+        vscode.commands.executeCommand("revealLine", {
+            lineNumber: currentLine + offset,
+            at: "center",
+        })
+    }
+
+    // Move Cursor
+    // ---------------------------------------------------------------------------------------------------------------
+
     /**
      * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
      */
     function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
         vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
-        vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount, revealCursor: true})
+        centerCursor()
+        // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount})
+        // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount, revealCursor: true})
     }
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunk', () => {
@@ -64,12 +87,13 @@ export function activate(context: vscode.ExtensionContext) {
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunks', () => {
-        _moveCursorVerticallyAndCenter('down', chunkSize * 2)
+        _moveCursorVerticallyAndCenter('down', chunkSize * 3)
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveUpChunks', () => {
-        _moveCursorVerticallyAndCenter('up', chunkSize * 2)
+        _moveCursorVerticallyAndCenter('up', chunkSize * 3)
     }))
+
 }
 
 // `deactivate` is called when the extension is deactivated.
