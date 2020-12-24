@@ -58,9 +58,8 @@ export function activate(context: vscode.ExtensionContext) {
         const editor = vscode.window.activeTextEditor
         if (!editor) { return }
         const currentLine = editor.selection.start.line
-        const offset = 4
         vscode.commands.executeCommand("revealLine", {
-            lineNumber: currentLine + offset,
+            lineNumber: currentLine,
             at: "center",
         })
     }
