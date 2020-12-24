@@ -63,7 +63,7 @@ async function centerCursor() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
 
-    const currentLine = editor.selection.active
+    const currentLine = editor.selection.active.line
     await vscode.commands.executeCommand("revealLine", {
         lineNumber: currentLine,
         at: "center",
