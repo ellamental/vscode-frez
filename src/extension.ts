@@ -54,11 +54,11 @@ export function activate(context: vscode.ExtensionContext) {
     // Center cursor
     // -------------
 
-    function centerCursor() {
+    async function centerCursor() {
         const editor = vscode.window.activeTextEditor
         if (!editor) { return }
         const currentLine = editor.selection.start.line
-        vscode.commands.executeCommand("revealLine", {
+        await vscode.commands.executeCommand("revealLine", {
             lineNumber: currentLine,
             at: "center",
         })
@@ -70,9 +70,9 @@ export function activate(context: vscode.ExtensionContext) {
     /**
      * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
      */
-    function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
-        vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
-        centerCursor()
+    async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
+        await vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
+        await centerCursor()
         // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount})
         // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount, revealCursor: true})
     }
