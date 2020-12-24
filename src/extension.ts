@@ -26,54 +26,63 @@
  
 import * as vscode from 'vscode'
 
+const chunkSize: number = 10
+
+
+function getActiveEditor() {
+    return vscode.window.activeTextEditor || {}
+}
+// function getSelection() {
+//     // TODO(nick): In Emacs, `point` is not always at the beginning of an
+//     //             active region (selection).  It sometimes matters... at a
+//     //             minimum, commands that deactivate the region should leave
+//     //             the cursor at `point` (not `mark`).
+//     //
+//     //             All the extension I've seen that implement point/mark do
+//     //             it with some internal state that tracks the point/mark.
+//     //             This may be necessary
+//     //
+//     //             Can we get the "direction" of a selection?  If so, we
+//     //             could potentially implement `point/mark` without relying
+//     //             on an extention's internal state.
+//     //
+//     //             Looks like this is:
+//     //                 mark = selection.anchor
+//     //                 point = selection.active
+// }
+
+function isSelectionActive() {
+    const editor = vscode.window.activeTextEditor
+    return editor && !editor.selection.isEmpty
+}
+
+// Center cursor
+// ---------------------------------------------------------------------------------------------------------------
+
+async function centerCursor() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+    const currentLine = editor.selection.active
+    await vscode.commands.executeCommand("revealLine", {
+        lineNumber: currentLine,
+        at: "center",
+    })
+}
+
+// Move Cursor
+// ---------------------------------------------------------------------------------------------------------------
+
+/**
+ * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
+ */
+async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
+    await vscode.commands.executeCommand('cursorMove', { to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive() })
+    centerCursor()
+}
+
 
 export function activate(context: vscode.ExtensionContext) {
-
-    const chunkSize: number = 10
-
-    // function getSelection() {
-    //     // TODO(nick): In Emacs, `point` is not always at the beginning of an
-    //     //             active region (selection).  It sometimes matters... at a
-    //     //             minimum, commands that deactivate the region should leave
-    //     //             the cursor at `point` (not `mark`).
-    //     //
-    //     //             All the extension I've seen that implement point/mark do
-    //     //             it with some internal state that tracks the point/mark.
-    //     //             This may be necessary
-    //     //
-    //     //             Can we get the "direction" of a selection?  If so, we
-    //     //             could potentially implement `point/mark` without relying
-    //     //             on an extention's internal state.
-    // }
-
-    function isSelectionActive() {
-        const editor = vscode.window.activeTextEditor
-        return editor && !editor.selection.isEmpty
-    }
-
-    // Center cursor
-    // -------------
-
-    async function centerCursor() {
-        const editor = vscode.window.activeTextEditor
-        if (!editor) { return }
-        const currentLine = editor.selection.start.line
-        await vscode.commands.executeCommand("revealLine", {
-            lineNumber: currentLine,
-            at: "center",
-        })
-    }
-
-    // Move Cursor
-    // ---------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
-     */
-    async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
-        await vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
-        centerCursor()
-    }
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunk', () => {
         _moveCursorVerticallyAndCenter('down', chunkSize)
