@@ -72,9 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
      */
     async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
         await vscode.commands.executeCommand('cursorMove', {to: direction, by: 'wrappedLine', value: amount, select: isSelectionActive()})
-        await centerCursor()
-        // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount})
-        // vscode.commands.executeCommand('editorScroll', {to: direction, by: 'wrappedLine', value: amount, revealCursor: true})
+        centerCursor()
     }
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-frez.moveDownChunk', () => {
