@@ -1,13 +1,70 @@
 import * as vscode from 'vscode'
 
 
+let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
+
+
 export interface CommandsListInterface {
     [name: string]: () => void
 }
 
 
-export function registerCommands(context: vscode.ExtensionContext, commands: CommandsListInterface) {
-    for (let [name, command] of Object.entries(commands)) {
-        context.subscriptions.push(vscode.commands.registerCommand(`vscode-frez.${name}`, command))
+export function registerCommands(context: vscode.ExtensionContext, ...commands: CommandsListInterface[]) {
+    for (let commandList of commands) {
+        for (let [name, command] of Object.entries(commandList)) {
+            context.subscriptions.push(vscode.commands.registerCommand(`vscode-frez.${name}`, command))
+        }
     }
+}
+
+
+// ===================================================================================================================
+// Misc Commands
+// ===================================================================================================================
+
+
+async function log() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+    // logger.appendLine(`editor.selection.active.line: ${editor.selection.active.line}`)
+    // logger.appendLine(`editor.selection.active.character: ${editor.selection.active.character}`)
+    // logger.appendLine(`editor.selection.anchor.line: ${editor.selection.anchor.line}`)
+    // logger.appendLine(`editor.selection.anchor.character: ${editor.selection.anchor.character}`)
+    // logger.appendLine(`editor.selection.start.character: ${editor.selection.start.character}`)
+    // logger.appendLine(`editor.selection.end.character: ${editor.selection.end.character}`)
+
+    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    logger.appendLine(`Context keys: ${contextKeys}`)
+
+    logger.show()
+}
+
+
+async function allContextKeys() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+
+    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    logger.appendLine(`Context keys: ${contextKeys}`)
+    logger.show()
+}
+
+
+async function currentContext() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+
+    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    logger.appendLine(`Context keys: ${contextKeys}`)
+    logger.show()
+}
+
+
+export const miscCommands: CommandsListInterface = {
+    log,
+    allContextKeys,
+    currentContext,
 }
