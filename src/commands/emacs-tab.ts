@@ -1,6 +1,5 @@
-'use strict'
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+// @ts-nocheck
+
 import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from 'vscode'
@@ -9,6 +8,7 @@ import * as vscode from 'vscode'
 import * as json from 'jsonc-parser'
 
 import {CommandsListInterface} from './index'
+
 
 // Rule configs
 type IBracketRuleConfig = [string, string]
