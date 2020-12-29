@@ -4,6 +4,14 @@ import * as vscode from 'vscode'
 let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
 
 
+const consoleLog = console.log.bind(console)
+const consoleLogs: any[][] = []
+console.log = function(...rest) {
+    consoleLogs.push(Array.from(rest))
+    consoleLog.apply(console, rest)
+}
+
+
 export interface CommandsListInterface {
     [name: string]: () => void
 }
@@ -34,10 +42,17 @@ async function log() {
     // logger.appendLine(`editor.selection.start.character: ${editor.selection.start.character}`)
     // logger.appendLine(`editor.selection.end.character: ${editor.selection.end.character}`)
 
-    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
-    logger.appendLine(`Context keys: ${contextKeys}`)
+    // const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    // logger.appendLine(`Context keys: ${contextKeys}`)
 
-    logger.show()
+    // logger.show()
+
+    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    logger.appendLine(`contextKeys: ${contextKeys}`)
+    setTimeout(() => {
+        logger.appendLine(`consoleLogs: ${consoleLogs}`)
+        logger.show()
+    }, 5000)
 }
 
 
@@ -48,23 +63,15 @@ async function allContextKeys() {
 
     const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
     logger.appendLine(`Context keys: ${contextKeys}`)
-    logger.show()
-}
-
-
-async function currentContext() {
-    const editor = vscode.window.activeTextEditor
-    if (!editor) { return }
-
-
-    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
-    logger.appendLine(`Context keys: ${contextKeys}`)
-    logger.show()
+    setTimeout(() => {
+        logger.appendLine(`consoleLogs: ${consoleLogs}`)
+        logger.show()
+    }, 5000)
+    // logger.show()
 }
 
 
 export const miscCommands: CommandsListInterface = {
     log,
     allContextKeys,
-    currentContext,
 }

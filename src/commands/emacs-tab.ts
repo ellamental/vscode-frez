@@ -248,6 +248,7 @@ function getLanguageConfiguration(id: string): ILanguageConfiguration {
 }
 
 function estimateIndentAction(validPreviousLine: string, currentLine: string, languageConfiguration: ILanguageConfiguration): vscode.IndentAction {
+    // eslint-disable-next-line eqeqeq
     if (validPreviousLine == null) {
         return vscode.IndentAction.None
     }
@@ -257,6 +258,7 @@ function estimateIndentAction(validPreviousLine: string, currentLine: string, la
     // 0 indentPattern
     const indentationRule = new IndentationRule(languageConfiguration.indentationRules)
     const indentationRuleIndentAction = indentationRule.estimateIndentAction(validPreviousLine, currentLine)
+    // eslint-disable-next-line eqeqeq
     if (indentationRuleIndentAction != null) {
         return indentationRuleIndentAction
     }
@@ -442,6 +444,7 @@ function getValidPreviousLine(allLinesArray: string[], currentLine: number): str
 
 function indentLine(line: string, indentLevel: number, previousIndent: string, previousIndentLevel: number, tabSize: number): string {
     const withoutLeadingWhiteSpacesLine = line.replace(/^[\s]*/, '')
+    // eslint-disable-next-line eqeqeq
     if (previousIndentLevel == indentLevel) {
         // If no need to change indent level, just use exactly the same indent to
         // the previous line.
