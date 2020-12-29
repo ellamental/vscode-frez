@@ -52,22 +52,13 @@ async function log() {
 }
 
 
-async function allContextKeys() {
-    const editor = vscode.window.activeTextEditor
-    if (!editor) { return }
-
-
-    const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
-    logger.appendLine(`Context keys: ${contextKeys}`)
-    setTimeout(() => {
-        logger.appendLine(`consoleLogs: ${consoleLogs}`)
-        logger.show()
-    }, 5000)
-    // logger.show()
+async function inspectContextKeys() {
+    vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    vscode.commands.executeCommand('workbench.action.toggleDevTools')
 }
 
 
 export const miscCommands: CommandsListInterface = {
     log,
-    allContextKeys,
+    inspectContextKeys,
 }

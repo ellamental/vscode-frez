@@ -3,9 +3,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from 'vscode'
-// import * as json from 'comment-json'
+import * as json from 'comment-json'
 // import * as json from 'jsonc-parser'
-import * as json from 'jsonc-parser'
 
 import {CommandsListInterface} from './index'
 
