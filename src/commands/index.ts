@@ -47,10 +47,20 @@ async function log() {
 
     // logger.show()
 
+    const consoleLog = console.log.bind(console)
+    const consoleLogs: any[][] = []
+    logger.append(`console.log: ${console.log}`)
+    console.log = function(...rest) {
+        logger.appendLine(`console.log(): ${rest}`)
+        // consoleLogs.push(Array.from(rest))
+        // consoleLog.apply(console, rest)
+    }
+    logger.append(`console.log: ${console.log}`)
+    
     const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
     logger.appendLine(`contextKeys: ${contextKeys}`)
     setTimeout(() => {
-        logger.appendLine(`consoleLogs: ${consoleLogs}`)
+        // logger.appendLine(`consoleLogs: ${consoleLogs}`)
         logger.show()
     }, 5000)
 }
