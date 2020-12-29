@@ -17,13 +17,14 @@ import * as vscode from 'vscode'
 
 import {registerCommands, miscCommands} from './commands'
 import * as moveCommands from './commands/move'
-// import * as emacsTab from './commands/emacs-tab'
+import * as emacsTab from './commands/emacs-tab'
 
 
 export function activate(context: vscode.ExtensionContext) {
     registerCommands(context,
         miscCommands,
         moveCommands.commands,
+        emacsTab.commands,
     )
 }
 

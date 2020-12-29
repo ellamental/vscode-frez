@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.46",
+	"version": "0.0.47",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -17,10 +17,6 @@
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
-			{
-				"command": "vscode-frez.log",
-				"title": "Frez - Log"
-			},
 			{
 				"command": "vscode-frez.inspectContextKeys",
 				"title": "Frez - Inspect Context Keys"
@@ -40,6 +36,14 @@
 			{
 				"command": "vscode-frez.moveDownChunks",
 				"title": "Frez - Move Down Chunks"
+			},
+			{
+				"command": "vscode-frez.emacsTab",
+				"title": "Frez - Emacs Tab"
+			},
+			{
+				"command": "vscode-frez.log",
+				"title": "Frez - Log"
 			}
 		]
 	},
