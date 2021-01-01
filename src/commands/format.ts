@@ -64,6 +64,7 @@ async function reindentSelectedLines() {
     // 1) The case where there's more than 1 blank line is pretty rare
     // 2) If you have the `"files.trimTrailingWhitespace": true` setting,
     //    the whitespace will be removed on save anyway.
+    await vscode.commands.executeCommand('editor.action.trimTrailingWhitespace')
 
     editor.selection = originalSelection
 
