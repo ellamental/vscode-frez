@@ -1,6 +1,9 @@
 import * as vscode from 'vscode'
 
-import {CommandsListInterface} from './index'
+import {ICommandsList} from './index'
+
+
+let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
 
 
 const chunkSize: number = 10
@@ -51,7 +54,8 @@ function moveUpChunks() {
     _moveCursorVerticallyAndCenter('up', chunkSize * 3)
 }
 
-export const commands: CommandsListInterface = {
+export const commands: ICommandsList = {
+    centerCursor,
     moveDownChunk,
     moveUpChunk,
     moveDownChunks,

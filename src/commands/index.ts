@@ -4,20 +4,11 @@ import * as vscode from 'vscode'
 let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
 
 
-const consoleLog = console.log.bind(console)
-const consoleLogs: any[][] = []
-console.log = function(...rest) {
-    consoleLogs.push(Array.from(rest))
-    consoleLog.apply(console, rest)
-}
-
-
-export interface CommandsListInterface {
+export interface ICommandsList {
     [name: string]: () => void
 }
 
-
-export function registerCommands(context: vscode.ExtensionContext, ...commands: CommandsListInterface[]) {
+export function registerCommands(context: vscode.ExtensionContext, ...commands: ICommandsList[]) {
     for (let commandList of commands) {
         for (let [name, command] of Object.entries(commandList)) {
             context.subscriptions.push(vscode.commands.registerCommand(`vscode-frez.${name}`, command))
@@ -29,7 +20,6 @@ export function registerCommands(context: vscode.ExtensionContext, ...commands: 
 // ===================================================================================================================
 // Misc Commands
 // ===================================================================================================================
-
 
 async function log() {
     const editor = vscode.window.activeTextEditor
@@ -45,20 +35,13 @@ async function log() {
     // const contextKeys = await vscode.commands.executeCommand('workbench.action.inspectContextKeys')
     // logger.appendLine(`Context keys: ${contextKeys}`)
 
-    // logger.show()
+    // vscode.commands.executeCommand('workbench.action.inspectContextKeys')
+    // vscode.commands.executeCommand('workbench.action.toggleDevTools')
 
-    vscode.commands.executeCommand('workbench.action.inspectContextKeys')
-    vscode.commands.executeCommand('workbench.action.toggleDevTools')
+    logger.show()
 }
 
 
-async function inspectContextKeys() {
-    vscode.commands.executeCommand('workbench.action.inspectContextKeys')
-    vscode.commands.executeCommand('workbench.action.toggleDevTools')
-}
-
-
-export const miscCommands: CommandsListInterface = {
+export const commands: ICommandsList = {
     log,
-    inspectContextKeys,
 }

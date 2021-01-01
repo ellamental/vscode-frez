@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.47",
+	"version": "0.0.48",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -38,8 +38,20 @@
 				"title": "Frez - Move Down Chunks"
 			},
 			{
-				"command": "vscode-frez.emacsTab",
-				"title": "Frez - Emacs Tab"
+				"command": "vscode-frez.centerCursor",
+				"title": "Frez - Center Cursor"
+			},
+			{
+				"command": "vscode-frez.reindentSelectedLines",
+				"title": "Frez - Reindent Selected Lines"
+			},
+			{
+				"command": "vscode-frez.inspectContextKeys",
+				"title": "Frez - Inspect Context Keys"
+			},
+			{
+				"command": "vscode-frez.inspectCommands",
+				"title": "Frez - Inspect Commands"
 			},
 			{
 				"command": "vscode-frez.log",

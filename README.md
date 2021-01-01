@@ -157,9 +157,18 @@ What are all the (editor) events I can subscribe to?
 ???
 
 
+How to get the "language configuration"
+---------------------------------------
+
+Short answer: There's no API for this.
+
+- [How to get the language configuration in a VSCode extension?](https://stackoverflow.com/q/63536669/645663)
+
+Long answer: [Allow extensions to get a LanguageConfiguration for a language #2871](https://github.com/microsoft/vscode/issues/2871)
+
+
 Extension Development Notes
 ===========================
-
 
 
 Logging
@@ -178,8 +187,29 @@ logger.show()
 Prompt User for Choice
 ----------------------
 
-```js
+```ts
 var choice = await vscode.window.showInformationMessage('Prompt...', 'Choice 1', 'Choice 2', ...)
 if (choice === 'Choice 1') {...}
 ```
+
+
+Modify the editor selection
+---------------------------
+
+```ts
+// Expand the "primary selection"
+editor.selection = new vscode.Selection(
+    editor.selection.start.translate(0, 1),
+    editor.selection.end.translate(0, 1),
+)
+
+// Expand all selections
+editor.selections = editor.selections.map((sel) => {
+    new vscode.Selection(sel.start.translate(0,1), sel.end.translate(0,1))
+})
+```
+
+- [Updating editor.selections in vscode Extension](https://stackoverflow.com/q/61933072/645663)
+- [How can I update the selection after edit?](https://stackoverflow.com/q/54145858/645663)
+
 
