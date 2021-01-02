@@ -47,8 +47,13 @@
 			},
 			{
 				"command": "vscode-frez.formatSelectedLines",
-				"title": "Frez - Format Selected Lines"
+                "title": "Frez - Format Selected Lines"
+            },
+			{
+				"command": "vscode-frez.onEnterIndentCurrentLine",
+				"title": "Frez - On Enter Indent Current Line"
 			},
+
 			{
 				"command": "vscode-frez.inspectContextKeys",
 				"title": "Frez - Inspect Context Keys"

@@ -12,6 +12,40 @@
  * Also... There might be some bad behavior that needs correcting with Python
  * (given 300k+ downloads of this ext):
  * - kevinrose.vsc-python-indent
+ *
+ * Relevant VSCode Issues
+ * ----------------------
+ *
+ * - Improve indentation rules #17868
+ *   https://github.com/microsoft/vscode/issues/17868
+ *
+ * - Explore using formatters for indentation adjustment when formatters are available #19847
+ *   https://github.com/microsoft/vscode/issues/19847
+ *
+ * - Reindent Lines does nothing if indentationRules do not exist #111088
+ *   https://github.com/microsoft/vscode/issues/111088
+ *
+ * - Reindent Selected Lines command bug? #51458
+ *   https://github.com/microsoft/vscode/issues/51458
+ *
+ * - 'Reindent Lines' produces different indentation than 'Format Document' in TypeScript #32835
+ *   https://github.com/Microsoft/vscode/issues/32835
+ *
+ * - 'reindent all lines' removes leading space in comment #19142
+ *   https://github.com/microsoft/vscode/issues/19142
+ *
+ * - Unify indentation and formatting APIs #34621
+ *   https://github.com/microsoft/vscode/issues/34621
+ *
+ * - Auto Indent / Code Formatting / Beautify #4039 (massive aggregate issue with no resolutions)
+ *   https://github.com/microsoft/vscode/issues/4039
+ *
+ * - Options for automatic indentation #19303
+ *   https://github.com/microsoft/vscode/issues/19303
+ *
+ * - 'reindent all lines' and formatter have different formatting strategies #19140
+ *   https://github.com/microsoft/vscode/issues/19140
+ *
  */
 
 import * as vscode from 'vscode'
@@ -23,6 +57,52 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 
 
 /**
+ * A super hacky method for indenting the current line
+ *
+ * This uses the `onEnterRules` for whatever language is currently active.
+ *
+ * Bugs:
+ * - This method just continually adds to the edit/undo history
+ * - If a closing bracket is the first non-whitespace character on the current
+ *   line, this will indent one level too far.
+ */
+async function onEnterIndentCurrentLine() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+    const currentLineNumber = editor.selection.active.line
+    const currentLine = editor.document.lineAt(currentLineNumber)
+    const currentLineText = currentLine.text
+    const firstNonWhitespaceIndex = currentLineText.search(/\S/)
+
+    if (firstNonWhitespaceIndex > 0) {
+        // Remove whitespace from current line
+        editor.edit((editBuilder) => {
+            if (firstNonWhitespaceIndex !== -1) {
+                editBuilder.replace(
+                    new vscode.Range(currentLineNumber, 0, currentLineNumber, firstNonWhitespaceIndex),
+                    '',
+                )
+            } else {
+                editBuilder.replace(
+                    currentLine.range,
+                    '',
+                )
+            }
+        })
+    }
+    // goto start of line
+    editor.selection = new vscode.Selection(
+        editor.selection.start.with(undefined, 0),
+        editor.selection.start.with(undefined, 0),
+    )
+    // backspace + enter
+    await vscode.commands.executeCommand<void>("deleteLeft")
+    vscode.commands.executeCommand<void>("default:type", { text: "\n" })
+}
+
+
+/**
  * An idempotent "indent" command (like `tab` in Emacs).
  *
  * This uses the "formatting provider" instead of the `reindent` commands.
@@ -30,10 +110,15 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
  * Bugs:
  * - In JSON it just "rounds down" the indentation to the previous indent level,
  *   which is rarely right.
+ * - Doesn't indent if the line you're on is empty
  */
 async function formatSelectedLines() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
+
+    // If we're in a JSON file use `reindentSelectedLines`?
+
+    // If the line is empty, use `reindentSelectedLines`
 
     // If there are no changes needed, `executeFormatRangeProvider` will return
     // `undefined`.
@@ -124,10 +209,14 @@ async function reindentSelectedLines() {
     // selection.
     prevLineNumber++
 
+    console.log('editor.selection.end: ', editor.selection.end)
+
     const newSelection: vscode.Selection = new vscode.Selection(
         new vscode.Position(prevLineNumber, 0),
         editor.selection.end,
     )
+
+    console.log('newSelection: ', newSelection)
 
     editor.selection = newSelection
     await vscode.commands.executeCommand('editor.action.reindentselectedlines')
@@ -143,13 +232,14 @@ async function reindentSelectedLines() {
     // 1) The case where there's more than 1 blank line is pretty rare
     // 2) If you have the `"files.trimTrailingWhitespace": true` setting,
     //    the whitespace will be removed on save anyway.
-    await vscode.commands.executeCommand('editor.action.trimTrailingWhitespace')
+    // await vscode.commands.executeCommand('editor.action.trimTrailingWhitespace')
 
     editor.selection = originalSelection
 }
 
 
 export const commands: ICommandsList = {
+    onEnterIndentCurrentLine,
     formatSelectedLines,
     reindentSelectedLines,
 }
