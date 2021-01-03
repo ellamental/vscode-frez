@@ -25,6 +25,17 @@ async function log() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
 
+    // const config = vscode.workspace.getConfiguration()
+    // console.log('config: ', config)
+
+    // const ret = await vscode.commands.executeCommand(
+    //     'vscode.executeCodeActionProvider',
+    //     editor.document.uri,
+    //     editor.selection,
+    // )
+
+    // console.log('ret: ', ret)
+
     // logger.appendLine(`editor.selection.active.line: ${editor.selection.active.line}`)
     // logger.appendLine(`editor.selection.active.character: ${editor.selection.active.character}`)
     // logger.appendLine(`editor.selection.anchor.line: ${editor.selection.anchor.line}`)

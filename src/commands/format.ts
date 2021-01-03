@@ -56,6 +56,8 @@ import {ICommandsList} from './index'
 let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
 
 
+
+
 /**
  * A super hacky method for indenting the current line
  *
@@ -65,6 +67,7 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
  * - This method just continually adds to the edit/undo history
  * - If a closing bracket is the first non-whitespace character on the current
  *   line, this will indent one level too far.
+ * - If on a line with only whitespace, this will duplicate the whitespace.
  */
 async function onEnterIndentCurrentLine() {
     const editor = vscode.window.activeTextEditor
@@ -75,30 +78,30 @@ async function onEnterIndentCurrentLine() {
     const currentLineText = currentLine.text
     const firstNonWhitespaceIndex = currentLineText.search(/\S/)
 
-    if (firstNonWhitespaceIndex > 0) {
-        // Remove whitespace from current line
-        editor.edit((editBuilder) => {
-            if (firstNonWhitespaceIndex !== -1) {
-                editBuilder.replace(
-                    new vscode.Range(currentLineNumber, 0, currentLineNumber, firstNonWhitespaceIndex),
-                    '',
-                )
-            } else {
-                editBuilder.replace(
-                    currentLine.range,
-                    '',
-                )
-            }
-        })
-    }
+    // Remove whitespace from current line
+    editor.edit((editBuilder) => {
+        if (firstNonWhitespaceIndex !== -1) {
+            editBuilder.replace(
+                new vscode.Range(currentLineNumber, 0, currentLineNumber, firstNonWhitespaceIndex),
+                '',
+            )
+        } else {
+            editBuilder.replace(
+                currentLine.range,
+                '',
+            )
+        }
+    })
+
     // goto start of line
     editor.selection = new vscode.Selection(
         editor.selection.start.with(undefined, 0),
         editor.selection.start.with(undefined, 0),
     )
     // backspace + enter
-    await vscode.commands.executeCommand<void>("deleteLeft")
-    vscode.commands.executeCommand<void>("default:type", { text: "\n" })
+    await vscode.commands.executeCommand('deleteLeft')
+    await vscode.commands.executeCommand('default:type', { text: '\n' })
+    // TODO(nick): Go to first non-whitespace character
 }
 
 
@@ -116,9 +119,20 @@ async function formatSelectedLines() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
 
-    // If we're in a JSON file use `reindentSelectedLines`?
-
-    // If the line is empty, use `reindentSelectedLines`
+    const currentLine = editor.document.lineAt(editor.selection.active.line)
+    if (currentLine.text.length === 0) {
+        // reindentselectedlines will fail to indent if the previous line is
+        // empty, but also if you're in Python.  So the backspace+enter hack
+        // is what we're going with... fml
+        await vscode.commands.executeCommand<void>("deleteLeft")
+        await vscode.commands.executeCommand<void>("default:type", { text: "\n" })
+        return
+    }
+    if (currentLine.isEmptyOrWhitespace) {
+        // This is going to be wrong some of the time, but probably better than
+        // jumping back-and-forth between indented and not.
+        return
+    }
 
     // If there are no changes needed, `executeFormatRangeProvider` will return
     // `undefined`.
@@ -130,38 +144,90 @@ async function formatSelectedLines() {
     // with the first (well... the first part of the first), which is the amount
     // to indent the current line.
 
-    const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>('vscode.executeFormatRangeProvider',
-        editor.document.uri,
-        editor.document.lineAt(editor.selection.active.line).range,
-        { insertSpaces: true, tabSize: 4 } as vscode.FormattingOptions,
-    )
-
-    // const rangeStart = editor.document.lineAt(editor.selection.active.line).range.start
-    // const rangeEnd = editor.document.lineAt(editor.selection.active.line).range.end
-    // console.log('rangeStart: ', rangeStart)
-    // console.log('rangeEnd: ', rangeEnd)
-    // console.log('edits: ', edits)
-
-    if (edits) {
-        editor.edit((editBuilder) => {
-            if (!edits[0].newText.startsWith('\n')) {
-                // This happens (at least in JSON) when the line is already
-                // indented correctly, but the formatter wants to break the line
-                // into multiple lines (which we don't want).  Fortunately the
-                // indent action is separated from the formatting action (at
-                // least for the default JSON language server).
-                editBuilder.replace(
-                    edits[0].range,
-                    edits[0].newText.replace(/\n|\r/g, ''),
-                )
-            }
-        })
+    if (editor.selection.start.line === editor.selection.end.line) {
+        await indentLineWithFormatCommand(editor, editor.selection.start.line)
+    } else {
+        // TODO(nick): Implement format lines
+        const startLine = editor.selection.start.line
+        const endLine = editor.selection.end.line
+        for (var line=startLine; line <= endLine; line++) {
+            await indentLineWithFormatCommand(editor, line)
+        }
     }
 
     // TODO(nick): If cursor is in the leading whitespace, move it to the first
     //             non-whitespace character.
+
 }
 
+
+async function indentLineWithFormatCommand(editor: vscode.TextEditor, lineNumber: number) {
+    const currentLine = editor.document.lineAt(lineNumber)
+    const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+        'vscode.executeFormatRangeProvider',
+        editor.document.uri,
+        currentLine.range,
+        { insertSpaces: true, tabSize: 4 } as vscode.FormattingOptions,
+    )
+    if (edits) {
+        if (!edits[0].newText.startsWith('\n')) {
+            // This happens (at least in JSON) when the line is already indented
+            // correctly, but the formatter wants to break the line into multiple
+            // lines (which we don't want).  Fortunately the indent action is
+            // separated from the formatting action (at least for the default JSON
+            // language server).
+
+            if (edits[0].range.start.character <= currentLine.firstNonWhitespaceCharacterIndex) {
+                // This prevents adding spaces if the line is already correctly
+                // indented and the first edit is a whitespace only edit.
+                //
+                // For an example, if this is called on the following line in a
+                // typescript file, and that line is already properly indented,
+                // the formatter will try to add spaces around the `=` in
+                // `line=startLine`.
+                //
+                //     for (var line=startLine; line <= endLine; line++) {
+                //
+                editor.edit((editBuilder) => {
+                    editBuilder.replace(edits[0].range, edits[0].newText)
+                })
+            }
+        }
+    }
+
+    return
+
+    // // One possible implementation is to select the "first word" and run
+    // // `formatselection`.  This appears to avoid the "reformat line" problem.
+    // //
+    // // But it appears as though the "first word" is at least somewhat nuanced,
+    // // and this implementation doesn't work for a typescript line that contains:
+    // //
+    // // `        'vscode.executeFormatRangeProvider',`
+    // //
+    // // Unfortunately selecting just the whitespace or the whitespace and the
+    // // first character of the first word doesn't indent as expected (though this
+    // // does seem to work if the first character is a bracket).
+    // //
+    // const firstWordRange = editor.document.getWordRangeAtPosition(new vscode.Position(lineNumber, currentLine.firstNonWhitespaceCharacterIndex))
+    // console.log('firstWordRange: ', firstWordRange)
+    //
+    // const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+    //     'vscode.executeFormatRangeProvider',
+    //     editor.document.uri,
+    //     firstWordRange,
+    //     // currentLine.range,
+    //     { insertSpaces: true, tabSize: 4 } as vscode.FormattingOptions,
+    // )
+    // if (edits) {
+    //     editor.edit((editBuilder) => {
+    //         editBuilder.replace(
+    //             edits[0].range,
+    //             edits[0].newText.replace(/\n|\r/g, '')
+    //         )
+    //     })
+    // }
+}
 
 /**
  * An idempotent "indent" command (like `tab` in Emacs).
