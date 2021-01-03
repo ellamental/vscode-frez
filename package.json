@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.50",
+	"version": "0.0.51",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -47,13 +47,12 @@
 			},
 			{
 				"command": "vscode-frez.formatSelectedLines",
-                "title": "Frez - Format Selected Lines"
-            },
+				"title": "Frez - Format Selected Lines"
+			},
 			{
 				"command": "vscode-frez.onEnterIndentCurrentLine",
 				"title": "Frez - On Enter Indent Current Line"
 			},
-
 			{
 				"command": "vscode-frez.inspectContextKeys",
 				"title": "Frez - Inspect Context Keys"
