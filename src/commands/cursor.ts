@@ -31,15 +31,16 @@ async function moveCursorToBeginningOfLine() {
     const currentPosition = editor.selection.active
     const currentLine = editor.document.lineAt(currentPosition.line)
 
-    if (currentPosition.character !== 0) {
-        editor.selection = new vscode.Selection(
-            editor.selection.anchor,
-            editor.selection.active.with(undefined, 0),
-        )
+    const newPos = editor.selection.active.with(
+        undefined,
+        currentPosition.character !== 0 ? 0 : currentLine.firstNonWhitespaceCharacterIndex,
+    )
+    if (editor.selection.active.isEqual(editor.selection.anchor)) {
+        editor.selection = new vscode.Selection(newPos, newPos)
     } else {
         editor.selection = new vscode.Selection(
             editor.selection.anchor,
-            editor.selection.active.with(undefined, currentLine.firstNonWhitespaceCharacterIndex),
+            newPos,
         )
     }
 }
