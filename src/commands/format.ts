@@ -145,23 +145,21 @@ async function formatSelectedLines() {
     // to indent the current line.
 
     if (editor.selection.start.line === editor.selection.end.line) {
-        await indentLineWithFormatCommand(editor, editor.selection.start.line)
+        await _indentLineWithFormatCommand(editor, editor.selection.start.line)
     } else {
         // TODO(nick): Implement format lines
         const startLine = editor.selection.start.line
         const endLine = editor.selection.end.line
         for (var line=startLine; line <= endLine; line++) {
-            await indentLineWithFormatCommand(editor, line)
+            await _indentLineWithFormatCommand(editor, line)
         }
     }
-
     // TODO(nick): If cursor is in the leading whitespace, move it to the first
     //             non-whitespace character.
-
 }
 
 
-async function indentLineWithFormatCommand(editor: vscode.TextEditor, lineNumber: number) {
+async function _indentLineWithFormatCommand(editor: vscode.TextEditor, lineNumber: number) {
     const currentLine = editor.document.lineAt(lineNumber)
     const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
         'vscode.executeFormatRangeProvider',
@@ -281,8 +279,6 @@ async function reindentSelectedLines() {
         new vscode.Position(prevLineNumber, 0),
         editor.selection.end,
     )
-
-    console.log('newSelection: ', newSelection)
 
     editor.selection = newSelection
     await vscode.commands.executeCommand('editor.action.reindentselectedlines')
