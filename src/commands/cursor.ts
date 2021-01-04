@@ -24,7 +24,7 @@ async function centerCursor() {
 // Move Cursor
 // ---------------------------------------------------------------------------------------------------------------
 
-async function moveCursorBeginningOfLine() {
+async function moveCursorToBeginningOfLine() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
 
@@ -76,7 +76,7 @@ function moveUpChunks() {
 
 export const commands: ICommandsList = {
     centerCursor,
-    moveCursorBeginningOfLine,
+    moveCursorToBeginningOfLine,
     moveDownChunk,
     moveUpChunk,
     moveDownChunks,
