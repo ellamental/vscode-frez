@@ -24,6 +24,26 @@ async function centerCursor() {
 // Move Cursor
 // ---------------------------------------------------------------------------------------------------------------
 
+async function moveCursorBeginningOfLine() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+    const currentPosition = editor.selection.active
+    const currentLine = editor.document.lineAt(currentPosition.line)
+
+    if (currentPosition.character !== 0) {
+        editor.selection = new vscode.Selection(
+            editor.selection.anchor,
+            editor.selection.active.with(undefined, 0),
+        )
+    } else {
+        editor.selection = new vscode.Selection(
+            editor.selection.anchor,
+            editor.selection.active.with(undefined, currentLine.firstNonWhitespaceCharacterIndex),
+        )
+    }
+}
+
 function _isSelectionActive() {
     const editor = vscode.window.activeTextEditor
     return editor && !editor.selection.isEmpty
@@ -56,6 +76,7 @@ function moveUpChunks() {
 
 export const commands: ICommandsList = {
     centerCursor,
+    moveCursorBeginningOfLine,
     moveDownChunk,
     moveUpChunk,
     moveDownChunks,

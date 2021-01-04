@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.52",
+	"version": "0.0.53",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -18,8 +18,12 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-frez.inspectContextKeys",
-				"title": "Frez - Inspect Context Keys"
+				"command": "vscode-frez.centerCursor",
+				"title": "Frez - Center Cursor"
+			},
+			{
+				"command": "vscode-frez.moveCursorToBeginningOfLine",
+				"title": "Frez - Move Cursor to Beginning of Line"
 			},
 			{
 				"command": "vscode-frez.moveUpChunk",
@@ -36,10 +40,6 @@
 			{
 				"command": "vscode-frez.moveDownChunks",
 				"title": "Frez - Move Down Chunks"
-			},
-			{
-				"command": "vscode-frez.centerCursor",
-				"title": "Frez - Center Cursor"
 			},
 			{
 				"command": "vscode-frez.reindentSelectedLines",
