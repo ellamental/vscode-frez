@@ -20,6 +20,7 @@ function inspectContextKeys() {
 
 async function inspectCommands() {
     const allCommands = await vscode.commands.getCommands()
+    allCommands.sort()
     for (let command of allCommands) {
         logger.appendLine(command)
     }
