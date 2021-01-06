@@ -9,24 +9,44 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 const chunkSize: number = 10
 
 
-async function moveCursorToBeginningOfLine() {
+async function moveCursorToBeginningOfLine(inMarkMode: boolean) {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
 
     const currentPosition = editor.selection.active
-    const currentLine = editor.document.lineAt(currentPosition.line)
 
     if (currentPosition.character === 0) {
         vscode.commands.executeCommand('cursorMove', {
             to: 'wrappedLineFirstNonWhitespaceCharacter',
-            select: !editor.selection.isEmpty,
+            select: inMarkMode,
         })
     } else {
         vscode.commands.executeCommand('cursorMove', {
             to: 'wrappedLineStart',
-            select: !editor.selection.isEmpty,
+            select: inMarkMode,
         })
     }
+
+    // TODO(nick): There's a "bug" here, where if you set the mark (in
+    //             `emacx-mcx`) then immediately `C-a` it will not select the
+    //             region.  In fact, the mark will still be set and will
+    //             actually be moved to the beginning of the line and any other
+    //             movement commands will then start selecting.
+    //
+    //             AFAICT, the only way to implement this would be to do it in
+    //             `emacs-mcx` or to update `emacs-mcx` to return some sort of
+    //             API that lets us access `isInMarkMode`.
+    // if (currentPosition.character === 0) {
+    //     vscode.commands.executeCommand('cursorMove', {
+    //         to: 'wrappedLineFirstNonWhitespaceCharacter',
+    //         select: !editor.selection.isEmpty,
+    //     })
+    // } else {
+    //     vscode.commands.executeCommand('cursorMove', {
+    //         to: 'wrappedLineStart',
+    //         select: !editor.selection.isEmpty,
+    //     })
+    // }
 
     // const currentPosition = editor.selection.active
     // const currentLine = editor.document.lineAt(currentPosition.line)

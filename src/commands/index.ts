@@ -5,7 +5,7 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 
 
 export interface ICommandsList {
-    [name: string]: () => void
+    [name: string]: (...args:any) => void
 }
 
 export function registerCommands(context: vscode.ExtensionContext, ...commands: ICommandsList[]) {
