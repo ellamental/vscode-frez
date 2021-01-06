@@ -18,9 +18,9 @@ function inspectContextKeys() {
     vscode.commands.executeCommand('workbench.action.toggleDevTools')
 }
 
-function inspectCommands() {
-    console.log('All Contriubted Commands: ', vscode.commands.getCommands())
-    logger.appendLine(`All Contriubted Commands: ${vscode.commands.getCommands()}`)
+async function inspectCommands() {
+    console.log('All Contriubted Commands: ', await vscode.commands.getCommands())
+    logger.appendLine(`All Contriubted Commands: ${await vscode.commands.getCommands()}`)
     logger.show()
 }
 
