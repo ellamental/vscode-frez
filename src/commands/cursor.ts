@@ -9,6 +9,12 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 const chunkSize: number = 10
 
 
+async function popAndSetMark() {
+    // await vscode.commands.executeCommand('emacs-mcx.popMark')
+    await vscode.commands.executeCommand('emacs-mcx.cancel')
+    await vscode.commands.executeCommand('emacs-mcx.setMarkCommand')
+}
+
 // Center cursor
 // ---------------------------------------------------------------------------------------------------------------
 
@@ -30,11 +36,11 @@ async function moveCursorToBeginningOfLine() {
 
     const currentPosition = editor.selection.active
     const currentLine = editor.document.lineAt(currentPosition.line)
-
     const newPos = editor.selection.active.with(
         undefined,
         currentPosition.character !== 0 ? 0 : currentLine.firstNonWhitespaceCharacterIndex,
     )
+
     if (editor.selection.active.isEqual(editor.selection.anchor)) {
         editor.selection = new vscode.Selection(newPos, newPos)
     } else {
@@ -82,4 +88,5 @@ export const commands: ICommandsList = {
     moveUpChunk,
     moveDownChunks,
     moveUpChunks,
+    popAndSetMark,
 }

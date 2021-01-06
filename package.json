@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.55",
+	"version": "0.0.56",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -40,6 +40,10 @@
 			{
 				"command": "vscode-frez.moveDownChunks",
 				"title": "Frez - Move Down Chunks"
+			},
+			{
+				"command": "vscode-frez.popAndSetMark",
+				"title": "Frez - Pop and Set Mark"
 			},
 			{
 				"command": "vscode-frez.reindentSelectedLines",

@@ -53,6 +53,7 @@ Potentially useful commands:
 ### How to get a list of `when` contexts?
 
 Found this process on SO!  https://stackoverflow.com/a/62202897/645663
+Here too!  https://stackoverflow.com/a/57245061/645663
 
 1) Open the developer tools
 2) Execute `workbench.action.inspectContextKeys` ("Developer: Inspect Context
@@ -64,7 +65,7 @@ Found this process on SO!  https://stackoverflow.com/a/62202897/645663
 
 7) To test if where you click matters do: `Object.keys(temp1).length` then
    repeat the above (clicking somewhere different)
-   
+
    7.a) ... it does.  Not only is there a difference between panes (ex: editor
         vs sidebar vs terminal), but there's also a difference between editors
         in different languages (ex: json vs typescript) and possibly different
@@ -76,9 +77,9 @@ ts differed by 9) and potentially where in the file you click and/or what things
 are active and maybe more!
 
 Issues:
-- Lift `setContext` from a command to proper API #10471 
+- Lift `setContext` from a command to proper API #10471
   https://github.com/Microsoft/vscode/issues/10471
-- Add suggestions for key binding when clause contexts #9303 
+- Add suggestions for key binding when clause contexts #9303
   https://github.com/Microsoft/vscode/issues/9303
 - Documentation for the keybinding when condition #641
   https://github.com/Microsoft/vscode-docs/issues/641
