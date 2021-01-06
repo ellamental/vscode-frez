@@ -19,9 +19,14 @@ function inspectContextKeys() {
 }
 
 async function inspectCommands() {
-    console.log('All Contriubted Commands: ', await vscode.commands.getCommands())
-    logger.appendLine(`All Contriubted Commands: ${await vscode.commands.getCommands()}`)
+    const allCommands = await vscode.commands.getCommands()
+    for (let command of allCommands) {
+        logger.appendLine(command)
+    }
     logger.show()
+    // console.log('All Contriubted Commands: ', await vscode.commands.getCommands())
+    // logger.appendLine(`All Contriubted Commands: ${await vscode.commands.getCommands()}`)
+    // logger.show()
 }
 
 
