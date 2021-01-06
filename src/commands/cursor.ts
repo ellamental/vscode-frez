@@ -19,10 +19,12 @@ async function moveCursorToBeginningOfLine() {
     if (currentPosition.character === 0) {
         vscode.commands.executeCommand('cursorMove', {
             to: 'wrappedLineFirstNonWhitespaceCharacter',
+            select: !editor.selection.isEmpty,
         })
     } else {
         vscode.commands.executeCommand('cursorMove', {
             to: 'wrappedLineStart',
+            select: !editor.selection.isEmpty,
         })
     }
 
