@@ -9,6 +9,15 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 const chunkSize: number = 10
 
 
+/**
+ * Move the cursor to the beginning of the line or the first non-whitespace
+ * character.
+ *
+ * To respect `emacs-mcx.inMarkMode`, use the following keybindings:
+ *
+ *     { "key": "ctrl+a", "command": "vscode-frez.moveCursorToBeginningOfLine" },
+ *     { "key": "ctrl+a", "command": "vscode-frez.moveCursorToBeginningOfLine", "args": true, "when": "emacs-mcx.inMarkMode" },
+ */
 async function moveCursorToBeginningOfLine(inMarkMode: boolean) {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
@@ -26,43 +35,6 @@ async function moveCursorToBeginningOfLine(inMarkMode: boolean) {
             select: inMarkMode,
         })
     }
-
-    // TODO(nick): There's a "bug" here, where if you set the mark (in
-    //             `emacx-mcx`) then immediately `C-a` it will not select the
-    //             region.  In fact, the mark will still be set and will
-    //             actually be moved to the beginning of the line and any other
-    //             movement commands will then start selecting.
-    //
-    //             AFAICT, the only way to implement this would be to do it in
-    //             `emacs-mcx` or to update `emacs-mcx` to return some sort of
-    //             API that lets us access `isInMarkMode`.
-    // if (currentPosition.character === 0) {
-    //     vscode.commands.executeCommand('cursorMove', {
-    //         to: 'wrappedLineFirstNonWhitespaceCharacter',
-    //         select: !editor.selection.isEmpty,
-    //     })
-    // } else {
-    //     vscode.commands.executeCommand('cursorMove', {
-    //         to: 'wrappedLineStart',
-    //         select: !editor.selection.isEmpty,
-    //     })
-    // }
-
-    // const currentPosition = editor.selection.active
-    // const currentLine = editor.document.lineAt(currentPosition.line)
-    // const newPos = editor.selection.active.with(
-    //     undefined,
-    //     currentPosition.character !== 0 ? 0 : currentLine.firstNonWhitespaceCharacterIndex,
-    // )
-
-    // if (editor.selection.active.isEqual(editor.selection.anchor)) {
-    //     editor.selection = new vscode.Selection(newPos, newPos)
-    // } else {
-    //     editor.selection = new vscode.Selection(
-    //         editor.selection.anchor,
-    //         newPos,
-    //     )
-    // }
 }
 
 async function centerCursor() {
@@ -97,13 +69,13 @@ async function popAndSetMark() {
 }
 
 async function copyAndDeactivateRegion() {
-    vscode.commands.executeCommand('editor.action.clipboardCopyAction')
-    vscode.commands.executeCommand('emacs-mcx.cancel')
+    await vscode.commands.executeCommand('editor.action.clipboardCopyAction')
+    await vscode.commands.executeCommand('emacs-mcx.cancel')
 }
 
 async function commentAndDeactivateRegion() {
-    vscode.commands.executeCommand('editor.action.commentLine')
-    vscode.commands.executeCommand('emacs-mcx.cancel')
+    await vscode.commands.executeCommand('editor.action.commentLine')
+    await vscode.commands.executeCommand('emacs-mcx.cancel')
 }
 
 
