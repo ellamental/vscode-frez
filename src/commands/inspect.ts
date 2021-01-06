@@ -20,6 +20,8 @@ function inspectContextKeys() {
 
 function inspectCommands() {
     console.log('All Contriubted Commands: ', vscode.commands.getCommands())
+    logger.appendLine(`All Contriubted Commands: ${vscode.commands.getCommands()}`)
+    logger.show()
 }
 
 

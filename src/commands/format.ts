@@ -48,61 +48,77 @@
  *
  */
 
+// Related comments from my keybindings.json file...
+//
+// TAB
+//
+// I want an emacs-style `TAB` damnit!
+//
+// - `editor.action.formatSelection` is great at indenting, but it will
+//   sometimes do more than that...  (ex: may turn a single line expression into
+//   multiple lines)
+//
+//   - `editor.action.formatSelection` "bugs":
+//     - When on a newline, there are many instances where TAB will not indent
+//       properly until there's text present.
+//     - In `keybindings.json`, put a closing bracket at the start of a line and
+//       press TAB.  It doesn't propertly indent.  It seems to "round down" to
+//       the next "level of indentation" (4 spaces), regardless of where the
+//       closing bracket is (even if it's 5 levels of indentation out!).
+//     - It also doesn't seem to work for comment lines at all
+//
+//   - "I'm thinking about a similar solution like running formatting on
+//     indentation characters and see what's the proper edits a formatter would
+//     provide. That means we run format on leading whitespaces instead of whole
+//     lines"
+//     https://github.com/Microsoft/vscode/issues/19847#issuecomment-277348907
+//
+//     - Problems with this approach:
+//       - Still just "rounds down" in JSON
+//       - What to do when there's no leading spaces?!
+//       - For multi-line selections, how to select just leading spaces to run
+//         this on?  One method I just tried is "column selection mode", and you
+//         only need to select a single whitespace character on each line (which
+//         is nice), however...
+//         - In JSON (at least), it still just rounds down... even if two lines
+//           are at different indents.  IOW it won't equalize the indentation.
+//
+// - `editor.action.reindentselectedlines` sucks! Ex: It will outdent if the
+//   previous line is blank (I'm pretty sure unconditionally)
+//   https://github.com/Microsoft/vscode/issues/32835
+//
+// - `garaemon.vscode-emacs-tab` isn't horrible, but throws errors in `json` and
+//   `rst` files (at least).  It also seems to not work when multiple lines are
+//   selected (not sure if always or if there's a particular condition).
+//
+//   - `vscode-frez.emacs-tab` This is just `garaemon.vscode-emacs-tab` but
+//     local so I can debug it.
+//
+// - Just plain useless extensions:
+//   - `sakapoko.vscode-emacs-indent` is just `reindentselectedlines`
+//   - `sandipchitale.vscode-indent-line` - this is just formatSelection with
+//     extra cursor movements
+//
+// - `vscode-frez.tab` WIP for just implementing this myself...
+//
+// vscode issues for `formatSelection` and `reindentselectedlines`:
+//
+// - Unify indentation and formatting APIs #34621
+//   https://github.com/microsoft/vscode/issues/34621
+// - Explore using formatters for indentation adjustment when formatters are available #19847
+//   https://github.com/microsoft/vscode/issues/19847
+// - Improve indentation rules #17868
+//   https://github.com/microsoft/vscode/issues/17868
+// - Allow more powerful onEnterRules for cursor alignment #66235
+//   https://github.com/microsoft/vscode/issues/66235
+
+
 import * as vscode from 'vscode'
 
 import {ICommandsList} from './index'
 
 
 let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
-
-
-
-
-/**
- * A super hacky method for indenting the current line
- *
- * This uses the `onEnterRules` for whatever language is currently active.
- *
- * Bugs:
- * - This method just continually adds to the edit/undo history
- * - If a closing bracket is the first non-whitespace character on the current
- *   line, this will indent one level too far.
- * - If on a line with only whitespace, this will duplicate the whitespace.
- */
-async function onEnterIndentCurrentLine() {
-    const editor = vscode.window.activeTextEditor
-    if (!editor) { return }
-
-    const currentLineNumber = editor.selection.active.line
-    const currentLine = editor.document.lineAt(currentLineNumber)
-    const currentLineText = currentLine.text
-    const firstNonWhitespaceIndex = currentLineText.search(/\S/)
-
-    // Remove whitespace from current line
-    editor.edit((editBuilder) => {
-        if (firstNonWhitespaceIndex !== -1) {
-            editBuilder.replace(
-                new vscode.Range(currentLineNumber, 0, currentLineNumber, firstNonWhitespaceIndex),
-                '',
-            )
-        } else {
-            editBuilder.replace(
-                currentLine.range,
-                '',
-            )
-        }
-    })
-
-    // goto start of line
-    editor.selection = new vscode.Selection(
-        editor.selection.start.with(undefined, 0),
-        editor.selection.start.with(undefined, 0),
-    )
-    // backspace + enter
-    await vscode.commands.executeCommand('deleteLeft')
-    await vscode.commands.executeCommand('default:type', { text: '\n' })
-    // TODO(nick): Go to first non-whitespace character
-}
 
 
 /**
@@ -228,7 +244,7 @@ async function _indentLineWithFormatCommand(editor: vscode.TextEditor, lineNumbe
 }
 
 /**
- * An idempotent "indent" command (like `tab` in Emacs).
+ * A "indent" command (like `tab` in Emacs).
  *
  * NOTE: The current implementation is a little janky/distracting as it
  * compensates for the implementation of `editor.action.reindentselectedlines`
@@ -300,8 +316,55 @@ async function reindentSelectedLines() {
 }
 
 
+/**
+ * A super hacky method for indenting the current line
+ *
+ * This uses the `onEnterRules` for whatever language is currently active.
+ *
+ * Bugs:
+ * - This method just continually adds to the edit/undo history
+ * - If a closing bracket is the first non-whitespace character on the current
+ *   line, this will indent one level too far.
+ * - If on a line with only whitespace, this will duplicate the whitespace.
+ */
+async function onEnterIndentCurrentLine() {
+    const editor = vscode.window.activeTextEditor
+    if (!editor) { return }
+
+    const currentLineNumber = editor.selection.active.line
+    const currentLine = editor.document.lineAt(currentLineNumber)
+    const currentLineText = currentLine.text
+    const firstNonWhitespaceIndex = currentLineText.search(/\S/)
+
+    // Remove whitespace from current line
+    editor.edit((editBuilder) => {
+        if (firstNonWhitespaceIndex !== -1) {
+            editBuilder.replace(
+                new vscode.Range(currentLineNumber, 0, currentLineNumber, firstNonWhitespaceIndex),
+                '',
+            )
+        } else {
+            editBuilder.replace(
+                currentLine.range,
+                '',
+            )
+        }
+    })
+
+    // goto start of line
+    editor.selection = new vscode.Selection(
+        editor.selection.start.with(undefined, 0),
+        editor.selection.start.with(undefined, 0),
+    )
+    // backspace + enter
+    await vscode.commands.executeCommand('deleteLeft')
+    await vscode.commands.executeCommand('default:type', { text: '\n' })
+    // TODO(nick): Go to first non-whitespace character
+}
+
+
 export const commands: ICommandsList = {
-    onEnterIndentCurrentLine,
     formatSelectedLines,
     reindentSelectedLines,
+    onEnterIndentCurrentLine,
 }

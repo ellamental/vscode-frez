@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.56",
+	"version": "0.0.57",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -18,12 +18,12 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-frez.centerCursor",
-				"title": "Frez - Center Cursor"
-			},
-			{
 				"command": "vscode-frez.moveCursorToBeginningOfLine",
 				"title": "Frez - Move Cursor to Beginning of Line"
+			},
+			{
+				"command": "vscode-frez.centerCursor",
+				"title": "Frez - Center Cursor"
 			},
 			{
 				"command": "vscode-frez.moveUpChunk",
@@ -44,6 +44,10 @@
 			{
 				"command": "vscode-frez.popAndSetMark",
 				"title": "Frez - Pop and Set Mark"
+			},
+			{
+				"command": "vscode-frez.commentAndDeactivateRegion",
+				"title": "Frez - Comment and Deactivate Region"
 			},
 			{
 				"command": "vscode-frez.reindentSelectedLines",

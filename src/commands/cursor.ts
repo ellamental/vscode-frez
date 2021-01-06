@@ -9,27 +9,6 @@ let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work with
 const chunkSize: number = 10
 
 
-async function popAndSetMark() {
-    // await vscode.commands.executeCommand('emacs-mcx.popMark')
-    await vscode.commands.executeCommand('emacs-mcx.cancel')
-    await vscode.commands.executeCommand('emacs-mcx.setMarkCommand')
-}
-
-// Center cursor
-// ---------------------------------------------------------------------------------------------------------------
-
-async function centerCursor() {
-    if (!vscode.window.activeTextEditor) { return }
-
-    await vscode.commands.executeCommand("revealLine", {
-        lineNumber: vscode.window.activeTextEditor.selection.active.line,
-        at: "center",
-    })
-}
-
-// Move Cursor
-// ---------------------------------------------------------------------------------------------------------------
-
 async function moveCursorToBeginningOfLine() {
     const editor = vscode.window.activeTextEditor
     if (!editor) { return }
@@ -51,19 +30,14 @@ async function moveCursorToBeginningOfLine() {
     }
 }
 
-function _isSelectionActive() {
-    const editor = vscode.window.activeTextEditor
-    return editor && !editor.selection.isEmpty
-}
+async function centerCursor() {
+    if (!vscode.window.activeTextEditor) { return }
 
-/**
- * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
- */
-async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
-    await vscode.commands.executeCommand('cursorMove', { to: direction, by: 'wrappedLine', value: amount, select: _isSelectionActive() })
-    centerCursor()
+    await vscode.commands.executeCommand("revealLine", {
+        lineNumber: vscode.window.activeTextEditor.selection.active.line,
+        at: "center",
+    })
 }
-
 
 function moveDownChunk() {
     _moveCursorVerticallyAndCenter('down', chunkSize)
@@ -81,12 +55,43 @@ function moveUpChunks() {
     _moveCursorVerticallyAndCenter('up', chunkSize * 3)
 }
 
+async function popAndSetMark() {
+    // await vscode.commands.executeCommand('emacs-mcx.popMark')
+    await vscode.commands.executeCommand('emacs-mcx.cancel')
+    await vscode.commands.executeCommand('emacs-mcx.setMarkCommand')
+}
+
+async function copyAndDeactivateRegion() {
+    vscode.commands.executeCommand('editor.action.clipboardCopyAction')
+    vscode.commands.executeCommand('emacs-mcx.cancel')
+}
+
+async function commentAndDeactivateRegion() {
+    vscode.commands.executeCommand('editor.action.commentLine')
+    vscode.commands.executeCommand('emacs-mcx.cancel')
+}
+
+
 export const commands: ICommandsList = {
-    centerCursor,
     moveCursorToBeginningOfLine,
+    centerCursor,
     moveDownChunk,
     moveUpChunk,
     moveDownChunks,
     moveUpChunks,
     popAndSetMark,
+    commentAndDeactivateRegion,
+}
+
+function _isSelectionActive() {
+    const editor = vscode.window.activeTextEditor
+    return editor && !editor.selection.isEmpty
+}
+
+/**
+ * Move the cursor up/down (direction) by a number of lines (amount), and center the viewport on the cursor.
+ */
+async function _moveCursorVerticallyAndCenter(direction: string, amount: number) {
+    await vscode.commands.executeCommand('cursorMove', { to: direction, by: 'wrappedLine', value: amount, select: _isSelectionActive() })
+    centerCursor()
 }
