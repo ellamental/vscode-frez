@@ -15,19 +15,32 @@ async function moveCursorToBeginningOfLine() {
 
     const currentPosition = editor.selection.active
     const currentLine = editor.document.lineAt(currentPosition.line)
-    const newPos = editor.selection.active.with(
-        undefined,
-        currentPosition.character !== 0 ? 0 : currentLine.firstNonWhitespaceCharacterIndex,
-    )
 
-    if (editor.selection.active.isEqual(editor.selection.anchor)) {
-        editor.selection = new vscode.Selection(newPos, newPos)
+    if (currentPosition.character === 0) {
+        vscode.commands.executeCommand('cursorMove', {
+            to: 'wrappedLineFirstNonWhitespaceCharacter',
+        })
     } else {
-        editor.selection = new vscode.Selection(
-            editor.selection.anchor,
-            newPos,
-        )
+        vscode.commands.executeCommand('cursorMove', {
+            to: 'wrappedLineStart',
+        })
     }
+
+    // const currentPosition = editor.selection.active
+    // const currentLine = editor.document.lineAt(currentPosition.line)
+    // const newPos = editor.selection.active.with(
+    //     undefined,
+    //     currentPosition.character !== 0 ? 0 : currentLine.firstNonWhitespaceCharacterIndex,
+    // )
+
+    // if (editor.selection.active.isEqual(editor.selection.anchor)) {
+    //     editor.selection = new vscode.Selection(newPos, newPos)
+    // } else {
+    //     editor.selection = new vscode.Selection(
+    //         editor.selection.anchor,
+    //         newPos,
+    //     )
+    // }
 }
 
 async function centerCursor() {

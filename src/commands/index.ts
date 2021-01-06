@@ -16,6 +16,36 @@ export function registerCommands(context: vscode.ExtensionContext, ...commands: 
     }
 }
 
+/**
+ * Execute a list of commands synchronously
+ */
+async function executeCommands(...commands: string[]) {
+    for (let command of commands) {
+        await vscode.commands.executeCommand(command)
+
+        // TODO(nick): Support commands with arguments (as an array with the
+        //             command being the first argument)
+        //
+        // function isIterable (value) {
+        //     return Symbol.iterator in Object(value);
+        // }
+        // if (isIterable(command)) {
+        //     await vscode.commands.executeCommand(...command)
+        // } else {
+        //     await vscode.commands.executeCommand(command)
+        // }
+    }
+}
+
+/**
+ * Execute a list of commands in parallel (but wait for the results).
+ */
+async function executeCommandsParallel(...commands: string[]) {
+    const promises = commands.map((command) => vscode.commands.executeCommand(command))
+    for (const promise of promises) {
+        await promise
+    }
+}
 
 // ===================================================================================================================
 // Misc Commands
@@ -54,5 +84,7 @@ async function log() {
 
 
 export const commands: ICommandsList = {
+    executeCommands,
+    executeCommandsParallel,
     log,
 }

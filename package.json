@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.60",
+	"version": "0.0.61",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -68,6 +68,14 @@
 			{
 				"command": "vscode-frez.inspectCommands",
 				"title": "Frez - Inspect Commands"
+			},
+			{
+				"command": "vscode-frez.executeCommandsParallel",
+				"title": "Frez - Execute a List of Commands in Parallel"
+			},
+			{
+				"command": "vscode-frez.executeCommands",
+				"title": "Frez - Execute a List of Commands"
 			},
 			{
 				"command": "vscode-frez.log",

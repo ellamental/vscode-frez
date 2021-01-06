@@ -25,9 +25,6 @@ async function inspectCommands() {
         logger.appendLine(command)
     }
     logger.show()
-    // console.log('All Contriubted Commands: ', await vscode.commands.getCommands())
-    // logger.appendLine(`All Contriubted Commands: ${await vscode.commands.getCommands()}`)
-    // logger.show()
 }
 
 
