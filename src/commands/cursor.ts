@@ -5,9 +5,7 @@ import {ICommandsList} from './index'
 
 let logger = vscode.window.createOutputChannel("frezlog")  // Seems to work without: `frezlog.show()`
 
-
 const chunkSize: number = 10
-
 
 /**
  * Move the cursor to the beginning of the line or the first non-whitespace
@@ -78,6 +76,21 @@ async function commentAndDeactivateRegion() {
     await vscode.commands.executeCommand('emacs-mcx.cancel')
 }
 
+async function listMoveDownChunk() {
+    vscode.commands.executeCommand('list.focusDown')
+    vscode.commands.executeCommand('list.focusDown')
+    vscode.commands.executeCommand('list.focusDown')
+    vscode.commands.executeCommand('list.focusDown')
+    vscode.commands.executeCommand('list.focusDown')
+}
+
+async function listMoveUpChunk() {
+    vscode.commands.executeCommand('list.focusUp')
+    vscode.commands.executeCommand('list.focusUp')
+    vscode.commands.executeCommand('list.focusUp')
+    vscode.commands.executeCommand('list.focusUp')
+    vscode.commands.executeCommand('list.focusUp')
+}
 
 export const commands: ICommandsList = {
     moveCursorToBeginningOfLine,
@@ -88,6 +101,8 @@ export const commands: ICommandsList = {
     moveUpChunks,
     popAndSetMark,
     commentAndDeactivateRegion,
+    listMoveDownChunk,
+    listMoveUpChunk,
 }
 
 function _isSelectionActive() {

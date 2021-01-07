@@ -4,7 +4,7 @@
 	"publisher": "frez",
 	"description": "",
 	"repository": "https://github.com/jacktrades/vscode-frez",
-	"version": "0.0.64",
+	"version": "0.0.65",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -48,6 +48,14 @@
 			{
 				"command": "vscode-frez.commentAndDeactivateRegion",
 				"title": "Frez - Comment and Deactivate Region"
+			},
+			{
+				"command": "vscode-frez.listMoveDownChunk",
+				"title": "Frez - List Move Down Chunk"
+			},
+			{
+				"command": "vscode-frez.listMoveUpChunk",
+				"title": "Frez - List Move Up Chunk"
 			},
 			{
 				"command": "vscode-frez.reindentSelectedLines",
