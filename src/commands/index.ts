@@ -37,6 +37,7 @@ async function executeCommands(commands: string[]) {
     }
 }
 
+
 /**
  * Execute a list of commands in parallel (but wait for the results).
  */
