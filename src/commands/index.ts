@@ -19,7 +19,7 @@ export function registerCommands(context: vscode.ExtensionContext, ...commands: 
 /**
  * Execute a list of commands synchronously
  */
-async function executeCommands(...commands: string[]) {
+async function executeCommands(commands: string[]) {
     for (let command of commands) {
         await vscode.commands.executeCommand(command)
 
@@ -40,7 +40,7 @@ async function executeCommands(...commands: string[]) {
 /**
  * Execute a list of commands in parallel (but wait for the results).
  */
-async function executeCommandsParallel(...commands: string[]) {
+async function executeCommandsParallel(commands: string[]) {
     const promises = commands.map((command) => vscode.commands.executeCommand(command))
     for (const promise of promises) {
         await promise
