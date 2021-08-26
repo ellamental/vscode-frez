@@ -8,12 +8,19 @@ executable init file.
 Build
 =====
 
-To build a package to install locally:
+Built packages aren't committed to the repo, so you have to build one locally to
+install it.  To build a package to install locally:
 
 ```
 cd $VSCODE_FREZ_REPO
 npm install
-npm run build-package
+make build
+```
+
+If you've made changes, you'll need to bump before you build, or just use:
+
+```
+make bump-build
 ```
 
 
