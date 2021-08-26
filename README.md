@@ -5,6 +5,18 @@ An extension for my personal VSCode config, because VSCode doesn't give me an
 executable init file.
 
 
+Build
+=====
+
+To build a package to install locally:
+
+```
+cd $VSCODE_FREZ_REPO
+npm install
+npm run build-package
+```
+
+
 FAQ
 ===
 
