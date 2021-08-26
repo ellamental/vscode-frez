@@ -17,6 +17,14 @@ npm install
 make build
 ```
 
+Then install in VSCode by opening the Command Palette and running:
+`Extensions: Install from VSIX`
+
+Then select the `.vsix` file that was generated in the repo root.
+
+Dev
+---
+
 If you've made changes, you'll need to bump before you build, or just use:
 
 ```
